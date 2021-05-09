@@ -1,20 +1,19 @@
 # Elk-Stack-Deployment
 Project 1 - Automated Elk Stack Deployment
 
+
 ## Automated ELK Stack Deployment
 
-The files in this repository were used to configure the network depicted below.
+The files contained in this repository were used to configure the network depicted below.
 
-![alt text](https://github.com/lk-burns/Elk-Stack-Deployment/blob/LauraBurns_ElkDiagram.drawio)
+![image](https://user-images.githubusercontent.com/75952979/117557330-ae61b800-b03f-11eb-8e40-433abf45f41a.png)
 
-[TODO: Update the path with the name of your diagram](Images/diagram_filename.png)
-
-These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above. Alternatively, select portions of the filebeat-playbook.yml may be used to install only certain pieces of it, such as Filebeat.
+These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above or alternatively, pieces of each playbook file may be used to install certain applications, such as Filebeat or Metricbeat.
 
   - _TODO: Enter the playbook file._
 
 This document contains the following details:
-- Description of the Topologu
+- Description of the Topology
 - Access Policies
 - ELK Configuration
   - Beats in Use
