@@ -229,52 +229,26 @@ The playbooks below will install Filebeat and Metricbeat, respectively, on the t
       enabled: true
 ```
 
-
-
-
 ### Using the Playbooks
 In order to use the playbooks, an Ansible control node should be configured onto the jump box. Assuming you have such a control node provisioned: 
 
-- SSH into the Ansible control node and copy the following playbook files to their corresponding directories:
-  - Install_Elk.yml --> /etc/ansible
-  - Filebeat-Playbook.yml --> /etc/ansible/roles
-  - Metricbeat-Playbook.yml --> /etc/ansible/roles
+- SSH into the Ansible control node and copy the following playbook files into the /etc/ansible directory:
+  - Install_Elk.yml
+  - Filebeat-Playbook.yml
+  - Metricbeat-Playbook.yml
 
+You can also copy the playbooks with Git to their destination: git clone https://github.com/lk-burns/Elk-Stack-Deployment.git
 
-You can also copy the playbooks with Git to their destination:
-
-```bash
-$ cd /etc/ansible
-$ mkdir files
-# Clone Repository + IaC Files
-$ git clone https://github.com/lk-burns/Elk-Stack-Deployment.git
-# Move Playbooks and hosts file into `/etc/ansible`
-$
-
-- Create a `hosts` file to specify which VMs to run each playbook on. Run the commands below:
-
-```bash
-$ cd /etc/ansible
-$ cat > hosts <<EOF
-[webservers]
-10.0.0.5
-10.0.0.6
-
-[elk]
-10.1.0.4
-EOF
-```
-
-- Update the 'hosts' file located in /etc/ansible/ to include the private IP addresses of the ELK and DVWA servers, in addition to the command 'ansible_python_interpreter=/usr/bin/python3' beside each IP address under the [webservers] header line. Make sure the [webservers] header line is uncommented.
+- Copy the `hosts` file to /etc/ansible/ to specify which VMs to run each playbook. Ensure that the private IP addresses of the ELK and DVWA servers is correct. In addition, include the command 'ansible_python_interpreter=/usr/bin/python3' beside each IP address as shown below to configure a Python 3 interpreter:
 
 ![image](https://user-images.githubusercontent.com/75952979/117558267-ca6a5700-b049-11eb-98a5-873a4cc3c468.png)
 
 
 - Run the playbooks with the following commands:
   - $ cd /etc/ansible
-  - $ ansible-playbook Install_Elk.yml elk
-  - $ ansible-playbook Filebeat-Playbook.yml webservers
-  - $ ansible-playbook Metricbeat-Playbook.yml webservers
+  - $ ansible-playbook Install_Elk.yml
+  - $ ansible-playbook Filebeat-Playbook.yml
+  - $ ansible-playbook Metricbeat-Playbook.yml
 
 It may take a few minutes for the ELK server to start up so be patient! 
 
