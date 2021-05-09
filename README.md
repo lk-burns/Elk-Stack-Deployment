@@ -82,6 +82,60 @@ The following screenshot displays the result of running `docker ps` after succes
 
 ![image](https://user-images.githubusercontent.com/75952979/117557926-3fd42880-b046-11eb-9dae-d9c8ed49658e.png)
 
+Below is a copy of the Elk installation playbook:
+
+```yaml
+---
+# install_elk.yml
+- name: Configure Elk VM with Docker
+  hosts: elkservers
+  remote_user: elk
+  become: true
+  tasks:
+    # Use apt module
+    - name: Install docker.io
+      apt:
+        update_cache: yes
+        name: docker.io
+        state: present
+
+      # Use apt module
+    - name: Install pip3
+      apt:
+        force_apt_get: yes
+        name: python3-pip
+        state: present
+
+      # Use pip module
+    - name: Install Docker python module
+      pip:
+        name: docker
+        state: present
+
+      # Use command module
+    - name: Increase virtual memory
+      command: sysctl -w vm.max_map_count=262144
+
+      # Use sysctl module
+    - name: Use more memory
+      sysctl:
+        name: vm.max_map_count
+        value: "262144"
+        state: present
+        reload: yes
+
+      # Use docker_container module
+    - name: download and launch a docker elk container
+      docker_container:
+        name: elk
+        image: sebp/elk:761
+        state: started
+        restart_policy: always
+        published_ports:
+          - 5601:5601
+          - 9200:9200
+          - 5044:5044
+```
 
 ### Target Machines & Beats
 This ELK server is configured to monitor the following virtual machines: DVWA 1 (10.0.0.5) abd DVWA 2 (10.0.0.6).
@@ -93,6 +147,90 @@ We have installed the following Beats on these machines:
 These Beats allow us to collect the following information from each machine:
 - **Filebeat:** collects and ships log files from the container including audit logs, gc logs, server logs, depreciation logs, and slow logs.
 - **Metricbeat:** periodically collects system-wide metrics on CPU, disk, and memory usage, network utilizations, as well as detects failed sudo escalations and SSH login attempts.
+
+The playbooks below will install Filebeat and Metricbeat, respectively, on the target hosts:
+
+```yaml
+---
+- name: Install and Launch Filebeat
+  hosts: webservers
+  become: true
+  tasks:
+    # Use command module
+  - name: Download filebeat .deb file
+    command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.6.1-amd64.deb
+
+    # Use command module
+  - name: Install filebeat .deb
+    command: dpkg -i filebeat-7.6.1-amd64.deb
+
+    # Use copy module
+  - name: Drop in filebeat config
+    copy:
+      src: /etc/ansible/files/filebeat-config.yml
+      dest: /etc/filebeat/filebeat.yml
+
+    # Use command module
+  - name: Enable and configure system module
+    command: filebeat modules enable system
+
+    # Use command module
+  - name: Setup filebeat
+    command: filebeat setup
+
+    # Use command module
+  - name: Start filebeat service
+    command: service filebeat start
+    
+    # Enable filebeat on boot
+  - name: Enable service filebeat on boot
+    systemd:
+      name: filebeat
+      enabled: true
+```
+
+
+```yaml
+---
+- name: Install and Launch Metricbeat
+  hosts: webservers
+  become: true
+  tasks:
+    # Use command module
+  - name: Download metricbeat
+    command: curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.4.0-amd64.deb
+
+    # Use command module
+  - name: Install metricbeat .deb
+    command: dpkg -i metricbeat-7.4.0-amd64.deb
+
+    # Use copy module
+  - name: Drop in metricbeat config
+    copy:
+      src: /etc/ansible/files/metricbeat-config.yml
+      dest: /etc/metricbeat/metricbeat.yml
+
+    # Use command module
+  - name: Enable and configure docker module for metricbeat
+    command: metricbeat modules enable docker
+
+    # Use command module
+  - name: Setup metricbeat
+    command: metricbeat setup
+
+    # Use command module
+  - name: Start metricbeat service
+    command: service metricbeat start
+    
+    # Enable filebeat on boot
+  - name: Enable service metricbeat on boot
+    systemd:
+      name: metricbeat
+      enabled: true
+```
+
+
+
 
 ### Using the Playbooks
 In order to use the playbooks, an Ansible control node should be configured onto the jump box. Assuming you have such a control node provisioned: 
@@ -111,9 +249,7 @@ $ mkdir files
 # Clone Repository + IaC Files
 $ git clone https://github.com/lk-burns/Elk-Stack-Deployment.git
 # Move Playbooks and hosts file into `/etc/ansible`
-$ cp Elk-Stack-Deployment/playbooks/* .
-$ cp Elk-Stack-Deployment/files/* ./files
-```
+$
 
 - Create a `hosts` file to specify which VMs to run each playbook on. Run the commands below:
 
