@@ -10,7 +10,7 @@ The files contained in this repository were used to configure the network depict
 
 These files have been tested and used to generate a live ELK deployment on Azure. They can be used to either recreate the entire deployment pictured above or alternatively, pieces of each playbook file may be used to install certain applications, such as Filebeat or Metricbeat.
 
-  - _TODO: Enter the playbook file._
+  - Install-Elk.yml
 
 This document contains the following details:
 - Description of the Topology
